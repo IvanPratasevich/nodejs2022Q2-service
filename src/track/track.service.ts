@@ -3,18 +3,23 @@ import { Track } from 'src/interfaces/interfaces';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { UpdateTrackDto } from './dto/update-track.dto';
+const tracks: Track[] = [];
 
 @Injectable()
 export class TrackService {
-  private tracks: Track[] = [];
   getTracks() {
-    return this.tracks;
+    return tracks;
   }
   getTrackById(id: string): Track {
-    const track = this.tracks.find((track) => track.id === id);
+    const track = tracks.find((track) => track.id === id);
     if (!track) {
       throw new NotFoundException('Track not found');
     }
+    return track;
+  }
+
+  checkTrackById(id: string): Track {
+    const track = tracks.find((track) => track.id === id);
     return track;
   }
   createTrack(createTrackDto: CreateTrackDto) {
@@ -22,7 +27,7 @@ export class TrackService {
       id: uuidv4(),
       ...createTrackDto,
     };
-    this.tracks.push(newTrack);
+    tracks.push(newTrack);
     return newTrack;
   }
   updateTrack(UpdateTrackDto: UpdateTrackDto, id: string) {
@@ -35,12 +40,12 @@ export class TrackService {
       ...track,
       ...UpdateTrackDto,
     };
-    this.tracks[trackIdx] = updateTrack;
+    tracks[trackIdx] = updateTrack;
     return updateTrack;
   }
 
   getTrackIdx(id: string): number {
-    const trackIdx = this.tracks.findIndex((artist) => id === artist.id);
+    const trackIdx = tracks.findIndex((artist) => id === artist.id);
     if (trackIdx != -1) {
       return trackIdx;
     }
@@ -49,6 +54,6 @@ export class TrackService {
 
   deleteTrack(id: string) {
     const user = this.getTrackIdx(id);
-    this.tracks.splice(user, 1);
+    tracks.splice(user, 1);
   }
 }
