@@ -32,7 +32,14 @@ export class FavsService {
   }
 
   deleteTrackFromFavs(id: string) {
-    return id;
+    const track = this.trackService.checkTrackById(id);
+    if (track) {
+      db.tracks = db.tracks.filter((track) => {
+        return track.id !== id;
+      });
+    } else {
+      throw new UnprocessableEntityException();
+    }
   }
   addAlbumToFavs(id: string) {
     const album = this.albumService.checkAlbumById(id);
@@ -44,7 +51,14 @@ export class FavsService {
     }
   }
   deleteAlbumFromFavs(id: string) {
-    return id;
+    const album = this.albumService.checkAlbumById(id);
+    if (album) {
+      db.albums = db.albums.filter((album) => {
+        return album.id !== id;
+      });
+    } else {
+      throw new UnprocessableEntityException();
+    }
   }
   addArtistToFavs(id: string) {
     const artist = this.artistService.checkArtistById(id);
@@ -56,6 +70,13 @@ export class FavsService {
     }
   }
   deleteArtistFromFavs(id: string) {
-    return id;
+    const artist = this.artistService.checkArtistById(id);
+    if (artist) {
+      db.artists = db.artists.filter((artist) => {
+        return artist.id !== id;
+      });
+    } else {
+      throw new UnprocessableEntityException();
+    }
   }
 }
