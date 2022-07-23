@@ -56,4 +56,20 @@ export class TrackService {
     const user = this.getTrackIdx(id);
     tracks.splice(user, 1);
   }
+
+  deleteAlbum(id) {
+    tracks.map((track) => {
+      if (id === track.albumId) {
+        track.albumId = null;
+      }
+    });
+  }
+
+  deleteArtist(id) {
+    tracks.map((track) => {
+      if (id === track.artistId) {
+        track.artistId = null;
+      }
+    });
+  }
 }

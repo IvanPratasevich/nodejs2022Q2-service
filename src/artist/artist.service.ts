@@ -3,11 +3,17 @@ import { Artist } from 'src/interfaces/interfaces';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { UpdateArtistDto } from './dto/update-artist.dto';
+import { AlbumService } from 'src/album/album.service';
+import { TrackService } from 'src/track/track.service';
 
 const artists: Artist[] = [];
 
 @Injectable()
 export class ArtistService {
+  constructor(
+    private readonly trackService: TrackService,
+    private readonly albumService: AlbumService,
+  ) {}
   getArtists() {
     return artists;
   }
@@ -56,5 +62,7 @@ export class ArtistService {
   deleteArtist(id: string) {
     const user = this.getArtistIdx(id);
     artists.splice(user, 1);
+    this.albumService.deleteArtist(id);
+    this.trackService.deleteArtist(id);
   }
 }

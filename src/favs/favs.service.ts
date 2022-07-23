@@ -2,7 +2,7 @@ import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { AlbumService } from 'src/album/album.service';
 import { TrackService } from 'src/track/track.service';
 import { ArtistService } from 'src/artist/artist.service';
-import { Track } from 'src/interfaces/interfaces';
+import { FavoritesRepsonse } from 'src/interfaces/interfaces';
 
 const db = {
   artists: [],
@@ -18,14 +18,31 @@ export class FavsService {
     private readonly albumService: AlbumService,
   ) {}
 
-  getAll() {
-    return db;
+  getAll(): FavoritesRepsonse {
+    const favoritesRepsonse: FavoritesRepsonse = {
+      albums: [],
+      artists: [],
+      tracks: [],
+    };
+    db.albums.forEach((album) => {
+      const findAlbum = this.albumService.checkAlbumById(album);
+      if (findAlbum) favoritesRepsonse.albums.push(findAlbum);
+    });
+    db.tracks.forEach((track) => {
+      const findTrack = this.trackService.checkTrackById(track);
+      if (findTrack) favoritesRepsonse.tracks.push(findTrack);
+    });
+    db.artists.forEach((artist) => {
+      const findArtist = this.artistService.checkArtistById(artist);
+      if (findArtist) favoritesRepsonse.artists.push(findArtist);
+    });
+    return favoritesRepsonse;
   }
-  addTrackToFavs(id: string): Track {
+
+  addTrackToFavs(id: string) {
     const track = this.trackService.checkTrackById(id);
     if (track) {
-      db.tracks.push(track);
-      return track;
+      db.tracks.push(id);
     } else {
       throw new UnprocessableEntityException();
     }
@@ -35,7 +52,7 @@ export class FavsService {
     const track = this.trackService.checkTrackById(id);
     if (track) {
       db.tracks = db.tracks.filter((track) => {
-        return track.id !== id;
+        return track !== id;
       });
     } else {
       throw new UnprocessableEntityException();
@@ -44,8 +61,7 @@ export class FavsService {
   addAlbumToFavs(id: string) {
     const album = this.albumService.checkAlbumById(id);
     if (album) {
-      db.albums.push(album);
-      return album;
+      db.albums.push(id);
     } else {
       throw new UnprocessableEntityException();
     }
@@ -54,7 +70,7 @@ export class FavsService {
     const album = this.albumService.checkAlbumById(id);
     if (album) {
       db.albums = db.albums.filter((album) => {
-        return album.id !== id;
+        return album !== id;
       });
     } else {
       throw new UnprocessableEntityException();
@@ -63,8 +79,7 @@ export class FavsService {
   addArtistToFavs(id: string) {
     const artist = this.artistService.checkArtistById(id);
     if (artist) {
-      db.artists.push(artist);
-      return artist;
+      db.artists.push(id);
     } else {
       throw new UnprocessableEntityException();
     }
@@ -73,10 +88,17 @@ export class FavsService {
     const artist = this.artistService.checkArtistById(id);
     if (artist) {
       db.artists = db.artists.filter((artist) => {
-        return artist.id !== id;
+        return artist !== id;
       });
     } else {
       throw new UnprocessableEntityException();
+    }
+  }
+
+  deleteAlbum(id) {
+    const albumIdx = db.albums.findIndex((album) => id === album.id);
+    if (albumIdx !== -1) {
+      return albumIdx;
     }
   }
 }

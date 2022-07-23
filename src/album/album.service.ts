@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Album } from 'src/interfaces/interfaces';
+import { TrackService } from 'src/track/track.service';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
@@ -8,6 +9,7 @@ const albums: Album[] = [];
 
 @Injectable()
 export class AlbumService {
+  constructor(private readonly trackService: TrackService) {}
   getAlbums() {
     return albums;
   }
@@ -56,5 +58,14 @@ export class AlbumService {
   deleteAlbum(id: string) {
     const album = this.getAlbumIdx(id);
     albums.splice(album, 1);
+    this.trackService.deleteAlbum(id);
+  }
+
+  deleteArtist(id) {
+    albums.map((album) => {
+      if (id === album.artistId) {
+        album.artistId = null;
+      }
+    });
   }
 }
