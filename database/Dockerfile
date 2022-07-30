@@ -1,0 +1,1 @@
+FROM postgress:13-alpine
