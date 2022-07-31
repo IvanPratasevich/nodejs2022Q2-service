@@ -1,28 +1,18 @@
 # Home Library Service
-## REST service: Containerization, Docker
+## REST service: PostgreSQL & ORM
 
 ## Instruction
 
 ```
 git clone git@github.com:IvanPratasevich/nodejs2022Q2-service.git
 cd nodejs2022Q2-service
-git checkout docker
+git checkout database-orm
 ```
 
 ## Running application
 
 ```
 npm run docker
-```
-
-## Scanning
-Scan application
-```
-npm run scan:application
-```
-Scan database
-```
-npm run scan:postgres
 ```
 
 ## Testing
