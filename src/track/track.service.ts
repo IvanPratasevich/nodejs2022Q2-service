@@ -72,19 +72,27 @@ export class TrackService {
     }
   }
 
-  deleteAlbum(id) {
-    tracks.map((track) => {
-      if (id === track.albumId) {
-        track.albumId = null;
-      }
-    });
+  async deleteAlbum(id) {
+    const tracks = await this.getTracks();
+    await Promise.all(
+      tracks.map(async (track) => {
+        if (id === track.albumId) {
+          track.albumId = null;
+          await this.trackRepository.save(track);
+        }
+      }),
+    );
   }
 
-  deleteArtist(id) {
-    tracks.map((track) => {
-      if (id === track.artistId) {
-        track.artistId = null;
-      }
-    });
+  async deleteArtist(id) {
+    const tracks = await this.getTracks();
+    await Promise.all(
+      tracks.map(async (track) => {
+        if (id === track.artistId) {
+          track.artistId = null;
+          await this.trackRepository.save(track);
+        }
+      }),
+    );
   }
 }

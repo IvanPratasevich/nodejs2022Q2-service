@@ -78,13 +78,15 @@ export class AlbumService {
     if (album) {
       await this.albumRepository.delete(id);
     }
-    this.trackService.deleteAlbum(id);
+    await this.trackService.deleteAlbum(id);
   }
 
-  deleteArtist(id) {
-    albums.map((album) => {
+  async deleteArtist(id) {
+    const albums = await this.getAlbums();
+    albums.map(async (album) => {
       if (id === album.artistId) {
         album.artistId = null;
+        await this.albumRepository.save(album);
       }
     });
   }
