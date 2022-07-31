@@ -19,7 +19,7 @@ export class FavsService {
   ) {}
 
   getAll(): FavoritesRepsonse {
-    const favoritesRepsonse: FavoritesRepsonse = {
+    const favoritesRepsonse = {
       albums: [],
       artists: [],
       tracks: [],
