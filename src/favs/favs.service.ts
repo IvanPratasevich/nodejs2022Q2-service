@@ -2,7 +2,9 @@ import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { AlbumService } from 'src/album/album.service';
 import { TrackService } from 'src/track/track.service';
 import { ArtistService } from 'src/artist/artist.service';
-import { FavoritesRepsonse } from 'src/interfaces/interfaces';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { FavsEntity } from './entities/favs.entity';
 
 const db = {
   artists: [],
@@ -16,40 +18,49 @@ export class FavsService {
     private readonly artistService: ArtistService,
     private readonly trackService: TrackService,
     private readonly albumService: AlbumService,
+    @InjectRepository(FavsEntity)
+    private readonly favsRepository: Repository<FavsEntity>,
   ) {}
 
-  getAll(): FavoritesRepsonse {
+  async getAll() {
     const favoritesRepsonse = {
       albums: [],
       artists: [],
       tracks: [],
     };
-    db.albums.forEach((album) => {
-      const findAlbum = this.albumService.checkAlbumById(album);
-      if (findAlbum) favoritesRepsonse.albums.push(findAlbum);
-    });
-    db.tracks.forEach((track) => {
-      const findTrack = this.trackService.checkTrackById(track);
-      if (findTrack) favoritesRepsonse.tracks.push(findTrack);
-    });
-    db.artists.forEach((artist) => {
-      const findArtist = this.artistService.checkArtistById(artist);
-      if (findArtist) favoritesRepsonse.artists.push(findArtist);
-    });
-    return favoritesRepsonse;
+    await Promise.all(
+      db.albums.map(async (album) => {
+        const findAlbum = await this.albumService.checkAlbumById(album);
+        if (findAlbum) favoritesRepsonse.albums.push(findAlbum);
+      }),
+    );
+    await Promise.all(
+      db.tracks.map(async (track) => {
+        const findTrack = await this.trackService.checkTrackById(track);
+        if (findTrack) favoritesRepsonse.tracks.push(findTrack);
+      }),
+    );
+    await Promise.all(
+      db.artists.map(async (artist) => {
+        const findArtist = await this.artistService.checkArtistById(artist);
+        if (findArtist) favoritesRepsonse.artists.push(findArtist);
+      }),
+    );
+    return await this.favsRepository.save(favoritesRepsonse);
   }
 
-  addTrackToFavs(id: string) {
-    const track = this.trackService.checkTrackById(id);
+  async addTrackToFavs(id: string) {
+    const track = await this.trackService.checkTrackById(id);
     if (track) {
       db.tracks.push(id);
+      return await this.getAll();
     } else {
       throw new UnprocessableEntityException();
     }
   }
 
-  deleteTrackFromFavs(id: string) {
-    const track = this.trackService.checkTrackById(id);
+  async deleteTrackFromFavs(id: string) {
+    const track = await this.trackService.checkTrackById(id);
     if (track) {
       db.tracks = db.tracks.filter((track) => {
         return track !== id;
@@ -58,16 +69,16 @@ export class FavsService {
       throw new UnprocessableEntityException();
     }
   }
-  addAlbumToFavs(id: string) {
-    const album = this.albumService.checkAlbumById(id);
+  async addAlbumToFavs(id: string) {
+    const album = await this.albumService.checkAlbumById(id);
     if (album) {
       db.albums.push(id);
     } else {
       throw new UnprocessableEntityException();
     }
   }
-  deleteAlbumFromFavs(id: string) {
-    const album = this.albumService.checkAlbumById(id);
+  async deleteAlbumFromFavs(id: string) {
+    const album = await this.albumService.checkAlbumById(id);
     if (album) {
       db.albums = db.albums.filter((album) => {
         return album !== id;
@@ -76,16 +87,17 @@ export class FavsService {
       throw new UnprocessableEntityException();
     }
   }
-  addArtistToFavs(id: string) {
-    const artist = this.artistService.checkArtistById(id);
+  async addArtistToFavs(id: string) {
+    const artist = await this.artistService.checkArtistById(id);
     if (artist) {
       db.artists.push(id);
     } else {
       throw new UnprocessableEntityException();
     }
   }
-  deleteArtistFromFavs(id: string) {
-    const artist = this.artistService.checkArtistById(id);
+
+  async deleteArtistFromFavs(id: string) {
+    const artist = await this.artistService.checkArtistById(id);
     if (artist) {
       db.artists = db.artists.filter((artist) => {
         return artist !== id;
