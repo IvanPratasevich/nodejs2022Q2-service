@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Album } from 'src/interfaces/interfaces';
 import { TrackService } from 'src/track/track.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -9,7 +14,10 @@ const albums: Album[] = [];
 
 @Injectable()
 export class AlbumService {
-  constructor(private readonly trackService: TrackService) {}
+  constructor(
+    @Inject(forwardRef(() => TrackService))
+    private readonly trackService: TrackService,
+  ) {}
   getAlbums() {
     return albums;
   }
