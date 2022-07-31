@@ -7,6 +7,10 @@
   "license": "UNLICENSED",
   "scripts": {
     "docker": "docker-compose up --build",
+    "migration": "npx typeorm-ts-node-esm migration:generate ./src/migrations/ -d ./src/ormconfig-migrations.ts",
+    "typeorm": "typeorm-ts-node-commonjs -d src/ormconfig-migrations.ts",
+    "db:drop": "npm run typeorm schema:drop",
+    "typeorm:run": "npm run typeorm migration:run",
     "scan:postgres": "docker scan nodejs2022q2-service_postgres",
     "scan:application": "docker scan nodejs2022q2-service_application",
     "prebuild": "rimraf dist",
