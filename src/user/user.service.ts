@@ -31,6 +31,14 @@ export class UserService {
     }
     return user;
   }
+
+  async getUserByLogin(userLogin: string) {
+    const user = await this.userRepository.findOne({
+      where: { login: userLogin },
+    });
+    return user;
+  }
+
   async createUser(createUserDto: CreateUserDto) {
     const newUser: User = {
       id: uuidv4(),
