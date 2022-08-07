@@ -19,6 +19,9 @@ export class AuthService {
   ) {}
   async validateUser(login: string, pass: string) {
     const result = await this.userService.getUserByLogin(login);
+    if (!result) {
+      throw new ForbiddenException('User not found');
+    }
     if (!(await bcrypt.compare(pass, result.password))) {
       throw new ForbiddenException('Wrong password');
     }
