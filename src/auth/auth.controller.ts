@@ -2,7 +2,6 @@ import { Controller, Post, Body } from '@nestjs/common';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
-import bcrypt from 'bcrypt';
 import 'dotenv/config';
 
 @Controller('auth')
@@ -16,5 +15,10 @@ export class AuthController {
   @Post('signup')
   async register(@Body() createUserDto: CreateUserDto) {
     return this.authService.signUp(createUserDto);
+  }
+
+  @Post('refresh')
+  async refresh(@Body() loginUserDto: LoginUserDto) {
+    return this.authService.refresh(loginUserDto);
   }
 }

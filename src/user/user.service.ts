@@ -32,9 +32,9 @@ export class UserService {
     return user;
   }
 
-  async getUserByLoginPass(userLogin: string, userPassword: string) {
+  async getUserByLogin(userLogin: string) {
     const user = await this.userRepository.findOne({
-      where: { login: userLogin, password: userPassword },
+      where: { login: userLogin },
     });
     return user;
   }
