@@ -1,12 +1,12 @@
 # Home Library Service
-## REST service: PostgreSQL & ORM
+## REST service: Authentication and Authorization  
 
 ## Instruction
 
 ```
 git clone git@github.com:IvanPratasevich/nodejs2022Q2-service.git
 cd nodejs2022Q2-service
-git checkout database-orm
+git checkout authentication
 ```
 
 ## Running application
